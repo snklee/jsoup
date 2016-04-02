@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/snklee/jsoup.svg?branch=master)](https://travis-ci.org/snklee/jsoup)
+[![Coverage Status](https://coveralls.io/repos/github/snklee/jsoup/badge.png?branch=master)](https://coveralls.io/github/snklee/jsoup?branch=master)
 
 jsoup: Java HTML parser that makes sense of real-world HTML soup.
 
