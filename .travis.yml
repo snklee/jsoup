@@ -1,4 +1,8 @@
-language: java
+language: JAVA
+jdk: oraclejdk7
+script: mvn test clean
 cache:
   directories:
   - $HOME/.m2
+notifications:
+    email: false
