@@ -2,18 +2,13 @@ package org.jsoup.nodes;
 
 import org.jsoup.Jsoup;
 import org.jsoup.TextUtil;
-import org.jsoup.helper.StringUtil;
 import org.jsoup.parser.Tag;
 import org.jsoup.select.Elements;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.Map;
+import static org.junit.Assert.*;
 
 /**
  * Tests for Element (DOM stuff mostly).
@@ -378,6 +373,18 @@ public class ElementTest {
         div.prependText("there & now > ");
         assertEquals("there & now > Hello", div.text());
         assertEquals("there &amp; now &gt; <p>Hello</p>", TextUtil.stripNewlines(div.html()));
+    }
+
+    @Test(expected = IllegalArgumentException.class) public void testThrowsOnAddNullText() {
+        Document doc = Jsoup.parse("<div id=1><p>Hello</p></div>");
+        Element div = doc.getElementById("1");
+        div.appendText(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)  public void testThrowsOnPrependNullText() {
+        Document doc = Jsoup.parse("<div id=1><p>Hello</p></div>");
+        Element div = doc.getElementById("1");
+        div.prependText(null);
     }
     
     @Test public void testAddNewHtml() {
@@ -791,7 +798,9 @@ public class ElementTest {
     }
 
     @Test
-    public void testHashAndEquals() {
+    public void testHashAndEqualsAndValue() {
+        // .equals and hashcode are identity. value is content.
+
         String doc1 = "<div id=1><p class=one>One</p><p class=one>One</p><p class=one>Two</p><p class=two>One</p></div>" +
                 "<div id=2><p class=one>One</p><p class=one>One</p><p class=one>Two</p><p class=two>One</p></div>";
 
@@ -822,17 +831,17 @@ public class ElementTest {
         Element e6 = els.get(6);
         Element e7 = els.get(7);
 
-        assertEquals(e0, e1);
-        assertEquals(e0, e4);
-        assertEquals(e0, e5);
+        assertEquals(e0, e0);
+        assertTrue(e0.hasSameValue(e1));
+        assertTrue(e0.hasSameValue(e4));
+        assertTrue(e0.hasSameValue(e5));
         assertFalse(e0.equals(e2));
-        assertFalse(e0.equals(e3));
-        assertFalse(e0.equals(e6));
-        assertFalse(e0.equals(e7));
+        assertFalse(e0.hasSameValue(e2));
+        assertFalse(e0.hasSameValue(e3));
+        assertFalse(e0.hasSameValue(e6));
+        assertFalse(e0.hasSameValue(e7));
 
-        assertEquals(e0.hashCode(), e1.hashCode());
-        assertEquals(e0.hashCode(), e4.hashCode());
-        assertEquals(e0.hashCode(), e5.hashCode());
+        assertEquals(e0.hashCode(), e0.hashCode());
         assertFalse(e0.hashCode() == (e2.hashCode()));
         assertFalse(e0.hashCode() == (e3).hashCode());
         assertFalse(e0.hashCode() == (e6).hashCode());
@@ -849,5 +858,37 @@ public class ElementTest {
         assertEquals("http://example.com/three.html", els.get(2).absUrl("href"));
         assertEquals("http://example2.com/four/", els.get(3).absUrl("href"));
         assertEquals("https://example2.com/five/", els.get(4).absUrl("href"));
+    }
+
+    @Test
+    public void appendMustCorrectlyMoveChildrenInsideOneParentElement() {
+        Document doc = new Document("");
+        Element body = doc.appendElement("body");
+        body.appendElement("div1");
+        body.appendElement("div2");
+        final Element div3 = body.appendElement("div3");
+        div3.text("Check");
+        final Element div4 = body.appendElement("div4");
+
+        ArrayList<Element> toMove = new ArrayList<Element>();
+        toMove.add(div3);
+        toMove.add(div4);
+
+        body.insertChildren(0, toMove);
+
+        String result = doc.toString().replaceAll("\\s+", "");
+        assertEquals("<body><div3>Check</div3><div4></div4><div1></div1><div2></div2></body>", result);
+    }
+
+    @Test
+    public void testHashcodeIsStableWithContentChanges() {
+        Element root = new Element(Tag.valueOf("root"), "");
+
+        HashSet<Element> set = new HashSet<Element>();
+        // Add root node:
+        set.add(root);
+
+        root.appendChild(new Element(Tag.valueOf("a"), ""));
+        assertTrue(set.contains(root));
     }
 }

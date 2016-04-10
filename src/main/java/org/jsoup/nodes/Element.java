@@ -358,6 +358,7 @@ public class Element extends Node {
      * @return this element
      */
     public Element appendText(String text) {
+        Validate.notNull(text);
         TextNode node = new TextNode(text, baseUri());
         appendChild(node);
         return this;
@@ -370,6 +371,7 @@ public class Element extends Node {
      * @return this element
      */
     public Element prependText(String text) {
+        Validate.notNull(text);
         TextNode node = new TextNode(text, baseUri());
         prependChild(node);
         return this;
@@ -1194,24 +1196,6 @@ public class Element extends Node {
 
     public String toString() {
         return outerHtml();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-
-        Element element = (Element) o;
-
-        return tag.equals(element.tag);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + (tag != null ? tag.hashCode() : 0);
-        return result;
     }
 
     @Override

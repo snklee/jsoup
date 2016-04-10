@@ -1,18 +1,46 @@
 jsoup changelog
 
 *** Release 1.8.4 [PENDING]
- * In Jsoup.Connect, if the same header key is seen multiple times, combine their values with a comma per the HTTP RFC,
-   instead of keeping just one value. Also fixes an issue where header values could be out of order.
-   <https://github.com/jhy/jsoup/issues/618>
+ * Added support for HTTP and SOCKS request proxies, specifiable per connection.
+   <https://github.com/jhy/jsoup/pull/570>
 
  * Added support in Jsoup.Connect for HEAD, OPTIONS, TRACE.
    <https://github.com/jhy/jsoup/issues/613>
+
+ * Added support for HTTP 307 Temporary Redirect (replays posts, if applicable).
+   <https://github.com/jhy/jsoup/pull/666>
+
+ * Performance improvements when parsing HTML, particularly for Android Dalvik.
+
+ * Added support for XML namespaces when converting jsoup documents to W3C documents.
+   <https://github.com/jhy/jsoup/pull/672>
+
+ * Added support for UTF-16 and UTF-32 character set detection from byte-order-marks (BOM).
+   <https://github.com/jhy/jsoup/issues/695>
+
+ * Added support for tags with non-ascii (unicode) letters.
+   <https://github.com/jhy/jsoup/issues/667>
 
  * Fixed an issue in the Parent selector where it would not match against the root element it was applied to.
    <https://github.com/jhy/jsoup/pull/619>
 
  * Fix an issue where elements.select(query) would not return every matching element if they had the same content.
    <https://github.com/jhy/jsoup/issues/614>
+
+ * Added not-null validators to Element.appendText() and Element.prependText()
+   <https://github.com/jhy/jsoup/issues/690>
+
+ * Fixed an issue when moving moving nodes using Element.insert(index, children) where the sibling index would be set
+   incorrectly, leading to the original loads being lost.
+   <https://github.com/jhy/jsoup/issues/689>
+
+ * Reverted Node.equals() and Node.hashCode() back to identity (object) comparisons, as deep content inspection
+   had negative performance impacts and hashkey stability problems. Functionality replaced with Node.hasSameContent().
+   <https://github.com/jhy/jsoup/issues/688>
+
+ * In Jsoup.Connect, if the same header key is seen multiple times, combine their values with a comma per the HTTP RFC,
+   instead of keeping just one value. Also fixes an issue where header values could be out of order.
+   <https://github.com/jhy/jsoup/issues/618>
 
 *** Release 1.8.3 [2015-Aug-02]
  * Added support for custom boolean attributes.

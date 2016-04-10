@@ -125,10 +125,11 @@ final class CharacterReader {
     String consumeToAny(final char... chars) {
         final int start = pos;
         final int remaining = length;
+        final char[] val = input;
 
         OUTER: while (pos < remaining) {
             for (char c : chars) {
-                if (input[pos] == c)
+                if (val[pos] == c)
                     break OUTER;
             }
             pos++;
@@ -296,7 +297,7 @@ final class CharacterReader {
         if (isEmpty())
             return false;
         char c = input[pos];
-        return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+        return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || Character.isLetter(c);
     }
 
     boolean matchesDigit() {
